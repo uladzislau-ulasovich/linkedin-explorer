@@ -8,6 +8,7 @@
 
   const script = document.createElement('script');
   script.type = 'text/javascript';
+  script.async = false;
   script.src = JQUERY_URL;
   document.getElementsByTagName('head')[0].appendChild(script);
   jQuery.noConflict();
@@ -98,6 +99,7 @@
       if (this.contentWindow.document.getElementById('a11y-notification') !== null) {
         const script = this.contentWindow.document.createElement('script');
         script.type = 'text/javascript';
+        script.async = false;
         script.src = JQUERY_URL;
         this.contentWindow.document.getElementsByTagName('head')[0].appendChild(script);
         jQuery.noConflict();
