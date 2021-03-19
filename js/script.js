@@ -25,10 +25,6 @@
       }
     };
   
-    async function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
     const iTAPlugin = jQuery.extend(jQuery.extend({}, basicPlugin), {
       init: function () {
         try {
@@ -60,12 +56,9 @@
         const userLinks = $('.entity-result__title-text .app-aware-link');
 
         let currentPageUrl = window.location.href;
-        await sleep(1000).then(() => { console.log('sleep for one second...') });
 
         for (const link of userLinks) {
-          await sleep(1000).then(() => {
-            this.visitLink(link);
-          });
+          this.visitLink(link);
         }
       }
     });
