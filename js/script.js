@@ -26,6 +26,9 @@
     };
   
     const iTAPlugin = jQuery.extend(jQuery.extend({}, basicPlugin), {
+      links: [],
+      currentIndex: 0,
+      currentPage: '',
       init: function () {
         try {
           document.getElementById(loader.panelId).removeChild(document.getElementById('ita-btn'));
@@ -42,24 +45,50 @@
         }.bind(this);
         document.getElementById(loader.panelId).appendChild(btn);
       },
-      visitLink: function(userLink) {
+      visitLinks: function() {
+        let userLink = this.links[this.currentIndex];
+
+        if (!userLink) {
+          console.log('No more links available')
+          window.history.go(-this.currentIndex - 1);
+          return;
+        }
+
         console.log(`visiting ${userLink.href}`);
-        // userLink.click();
+        userLink.click();
+        var intervalId = setInterval(() => {
+          let profileHeader = this.$('.artdeco-card.ember-view.pv-top-card');
+          if (profileHeader.length) {
+            // profile header loaded
+            clearInterval(intervalId);
+
+            console.log('Profile header already loaded');
+
+            let openToWorkCard = this.$('.poc-opportunities-card__text-content');
+
+            if (openToWorkCard.length) {
+              // save userLink
+              console.log(`User ${userLink} is open to work`);
+            }
+
+            //go to the next link
+            this.currentIndex = this.currentIndex + 1;
+            this.visitLinks(this);
+          }
+        }, 3000);
       },
-      findOpenToWorkEngineers: function () {
+      findOpenToWorkEngineers: function() {
         console.log('Looking for open to work engineers...')
 
-        $('#loader-inner-iframe-5079520').load(function() {
-          console.log('iframe url changed, ready to go...')
-        });
+        this.currentPage = window.location.href;
+        this.links = this.$('.entity-result__title-text .app-aware-link');
+        this.currentIndex = 0;
 
-        const userLinks = $('.entity-result__title-text .app-aware-link');
+        this.visitLinks();
 
-        let currentPageUrl = window.location.href;
-
-        for (const link of userLinks) {
-          this.visitLink(link);
-        }
+        // for (const link of [ userLinks[0], userLinks[1] ]) {
+        //  this.visitLink(link);
+        // }
       }
     });
   
