@@ -29,6 +29,7 @@
       links: [],
       currentIndex: 0,
       currentPage: '',
+      openToWork: [],
       init: function () {
         try {
           document.getElementById(loader.panelId).removeChild(document.getElementById('ita-btn'));
@@ -45,7 +46,7 @@
         }.bind(this);
         document.getElementById(loader.panelId).appendChild(btn);
       },
-      visitLinks: function() {
+      visitLinks() {
         let userLink = this.links[this.currentIndex];
 
         if (!userLink) {
@@ -55,40 +56,35 @@
         }
 
         console.log(`visiting ${userLink.href}`);
-        userLink.click();
-        var intervalId = setInterval(() => {
-          let profileHeader = this.$('.artdeco-card.ember-view.pv-top-card');
-          if (profileHeader.length) {
-            // profile header loaded
-            clearInterval(intervalId);
 
-            console.log('Profile header already loaded');
+        this.app.contentWindow.location.href = userLink.href
+        setTimeout(() => {
+          
+          let openToWorkCard = this.app.contentWindow.document.querySelector('.poc-opportunities-card__text-content')
 
-            let openToWorkCard = this.$('.poc-opportunities-card__text-content');
-
-            if (openToWorkCard.length) {
-              // save userLink
-              console.log(`User ${userLink} is open to work`);
-            }
-
-            //go to the next link
-            this.currentIndex = this.currentIndex + 1;
-            this.visitLinks(this);
+          if (openToWorkCard) {
+            console.log(`User ${userLink} is open to work`)
+            this.openToWork.push(userLink.href)
           }
+          this.app.contentWindow.location.href = this.currentPage
+
+          if (this.currentIndex === this.links.length - 1) {
+            console.log('Open to work: ', this.openToWork)
+            return
+          }
+
+          this.currentIndex++
+          this.visitLinks()
         }, 3000);
       },
       findOpenToWorkEngineers: function() {
         console.log('Looking for open to work engineers...')
 
         this.currentPage = window.location.href;
-        this.links = this.$('.entity-result__title-text .app-aware-link');
+        this.links = this.app.contentWindow.document.querySelectorAll('.entity-result__title-text > .app-aware-link');
+        console.log('User profiles: ', this.links);
         this.currentIndex = 0;
-
         this.visitLinks();
-
-        // for (const link of [ userLinks[0], userLinks[1] ]) {
-        //  this.visitLink(link);
-        // }
       }
     });
   
