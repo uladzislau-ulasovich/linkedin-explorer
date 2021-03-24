@@ -85,11 +85,6 @@
           this.openToWork.push(userLink.href)
         }
 
-        // Go to the page with search results
-        this.app.contentWindow.location.href = this.currentPage
-
-        await timeout(3000)
-
         if (this.currentIndex === this.links.length - 1) {
           const isEnd = await this.nextPage()
 
