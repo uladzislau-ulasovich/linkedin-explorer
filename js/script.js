@@ -6,6 +6,8 @@
 
   const JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js';
 
+  const timeout = time => new Promise(resolve => setTimeout(resolve, time));
+
   const script = document.createElement('script');
   script.type = 'text/javascript';
   script.async = false;
@@ -29,6 +31,7 @@
       links: [],
       currentIndex: 0,
       currentPage: '',
+      pageNumber: 1,
       openToWork: [],
       init: function () {
         try {
@@ -46,42 +49,49 @@
         }.bind(this);
         document.getElementById(loader.panelId).appendChild(btn);
       },
-      visitLinks() {
-        let userLink = this.links[this.currentIndex];
-
-        if (!userLink) {
-          console.log('No more links available')
-          window.history.go(-this.currentIndex - 1);
-          return;
+      nextPage() {
+        console.log('Next page...')
+        const nextPageButton = this.app.contentWindow.document.querySelector('.artdeco-pagination__button.artdeco-pagination__button--next.artdeco-button.artdeco-button--muted.artdeco-button--icon-right.artdeco-button--1.artdeco-button--tertiary.ember-view')
+        if (nextPageButton.disabled) {
+          console.log(`No more pages are available`)
+          return true
         }
+        console.log(`Go to the next page`)
+        this.pageNumber++
+        this.app.contentWindow.location.href = this.currentPage + `&page=` + this.pageNumber
+        return false
+      },
+      async visitLinks() {
+        let userLink = this.links[this.currentIndex];
 
         console.log(`visiting ${userLink.href}`);
 
         this.app.contentWindow.location.href = userLink.href
-        setTimeout(() => {
-          
-          let openToWorkCard = this.app.contentWindow.document.querySelector('.poc-opportunities-card__text-content')
 
-          if (openToWorkCard) {
-            console.log(`User ${userLink} is open to work`)
-            this.openToWork.push(userLink.href)
-          }
-          this.app.contentWindow.location.href = this.currentPage
+        await timeout(3000)
 
-          if (this.currentIndex === this.links.length - 1) {
-            console.log('Open to work: ', this.openToWork)
-            return
-          }
+        let openToWorkCard = this.app.contentWindow.document.querySelector('.poc-opportunities-card__text-content')
 
-          this.currentIndex++
-          this.visitLinks()
-        }, 3000);
+        if (openToWorkCard) {
+          console.log(`User ${userLink} is open to work`)
+          this.openToWork.push(userLink.href)
+        }
+        this.app.contentWindow.location.href = this.currentPage
+
+        if (this.currentIndex === this.links.length - 1) {
+          console.log('Open to work: ', this.openToWork)
+          return
+        }
+
+        this.currentIndex++
+        console.log('Index', this.currentIndex)
+        this.visitLinks()
       },
       findOpenToWorkEngineers: function() {
         console.log('Looking for open to work engineers...')
 
-        this.currentPage = window.location.href;
-        this.links = this.app.contentWindow.document.querySelectorAll('.entity-result__title-text > .app-aware-link');
+        this.currentPage = this.app.contentWindow.location.href;
+        this.links = [...this.app.contentWindow.document.querySelectorAll('.entity-result__title-text > .app-aware-link')].slice(0, 2);
         console.log('User profiles: ', this.links);
         this.currentIndex = 0;
         this.visitLinks();
