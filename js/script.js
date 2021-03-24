@@ -49,22 +49,29 @@
         }.bind(this);
         document.getElementById(loader.panelId).appendChild(btn);
       },
-      nextPage() {
+      async nextPage() {
         console.log('Next page...')
-        const nextPageButton = this.app.contentWindow.document.querySelector('.artdeco-pagination__button.artdeco-pagination__button--next.artdeco-button.artdeco-button--muted.artdeco-button--icon-right.artdeco-button--1.artdeco-button--tertiary.ember-view')
-        if (nextPageButton.disabled) {
+        this.pageNumber++
+        this.app.contentWindow.location.href = this.currentPage + `&page=` + this.pageNumber
+        await timeout(3000)
+        this.links = this.app.contentWindow.document.querySelectorAll('.entity-result__title-text > .app-aware-link')
+        console.log('New page user profiles: ', this.links);
+
+        if (!this.links.length) {
           console.log(`No more pages are available`)
           return true
         }
-        console.log(`Go to the next page`)
-        this.pageNumber++
-        this.app.contentWindow.location.href = this.currentPage + `&page=` + this.pageNumber
+        
+        this.currentPage = this.app.contentWindow.location.href;
+        this.currentIndex = 0;
+
         return false
       },
       async visitLinks() {
         let userLink = this.links[this.currentIndex];
 
         console.log(`visiting ${userLink.href}`);
+        console.log(`Current index`, this.currentIndex)
 
         this.app.contentWindow.location.href = userLink.href
 
@@ -76,22 +83,35 @@
           console.log(`User ${userLink} is open to work`)
           this.openToWork.push(userLink.href)
         }
+
+        // Go to the page with search results
         this.app.contentWindow.location.href = this.currentPage
 
+        await timeout(3000)
+
         if (this.currentIndex === this.links.length - 1) {
-          console.log('Open to work: ', this.openToWork)
+          const isEnd = await this.nextPage()
+
+          console.log('isEnd', isEnd)
+
+          if (isEnd) {
+            console.log('No more pages to visit')
+            console.log('Open to work profiles: ', this.openToWork)
+            return
+          }
+          
+          this.visitLinks()
           return
         }
 
         this.currentIndex++
-        console.log('Index', this.currentIndex)
         this.visitLinks()
       },
       findOpenToWorkEngineers: function() {
         console.log('Looking for open to work engineers...')
-
+        this.pageNumber = 1
         this.currentPage = this.app.contentWindow.location.href;
-        this.links = [...this.app.contentWindow.document.querySelectorAll('.entity-result__title-text > .app-aware-link')].slice(0, 2);
+        this.links = this.app.contentWindow.document.querySelectorAll('.entity-result__title-text > .app-aware-link')
         console.log('User profiles: ', this.links);
         this.currentIndex = 0;
         this.visitLinks();
