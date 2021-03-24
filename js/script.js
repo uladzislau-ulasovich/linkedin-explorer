@@ -50,6 +50,7 @@
         document.getElementById(loader.panelId).appendChild(btn);
       },
       async nextPage() {
+        // if (this.pageNumber === 1) return true
         console.log('Next page...')
         this.pageNumber++
         this.app.contentWindow.location.href = this.currentPage + `&page=` + this.pageNumber
@@ -96,7 +97,25 @@
 
           if (isEnd) {
             console.log('No more pages to visit')
-            console.log('Open to work profiles: ', this.openToWork)
+            
+            const ul = document.createElement('ul')
+            ul.style.position = 'fixed'
+            ul.style.backgroundColor = '#ffffff'
+            ul.style.padding = '2rem'
+            ul.style.border = '2px solid black'
+            ul.style.top = 0
+            ul.style.right = 0
+            ul.style.zIndex = 10000
+
+            this.openToWork.forEach(open => {
+              const li = document.createElement('li')
+              console.log(open)
+              li.innerHTML = open
+              ul.appendChild(li)
+            })
+
+            document.body.appendChild(ul)
+
             return
           }
           
