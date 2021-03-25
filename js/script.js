@@ -129,7 +129,7 @@
                             .split('&')
                             .filter(param => param.startsWith('page'))[0]
         
-        if (page) {
+        if (pageParam) {
           this.pageNumber = Number(pageParam.split('=')[1])
           console.log(`Continue search from page ${this.pageNumber}`)
         } else {
