@@ -123,7 +123,20 @@
       },
       findOpenToWorkEngineers: function() {
         console.log('Looking for open to work engineers...')
-        this.pageNumber = 1
+
+        const pageParam = this.app.contentWindow.location.search
+                            .substr(1)
+                            .split('&')
+                            .filter(param => param.startsWith('page'))[0]
+        
+        if (page) {
+          this.pageNumber = Number(pageParam.split('=')[1])
+          console.log(`Continue search from page ${this.pageNumber}`)
+        } else {
+          console.log(`Start search from page ${this.pageNumber}`)
+          this.pageNumber = 1
+        }
+
         this.currentPage = this.app.contentWindow.location.href;
         this.links = this.app.contentWindow.document.querySelectorAll('.entity-result__title-text > .app-aware-link')
         console.log('User profiles: ', this.links);
