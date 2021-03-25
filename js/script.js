@@ -54,7 +54,7 @@
         console.log('Next page...')
         this.pageNumber++
         this.app.contentWindow.location.href = this.currentPage + `&page=` + this.pageNumber
-        await timeout(3000)
+        await timeout(5000)
         this.links = this.app.contentWindow.document.querySelectorAll('.entity-result__title-text > .app-aware-link')
         console.log('New page user profiles: ', this.links);
 
