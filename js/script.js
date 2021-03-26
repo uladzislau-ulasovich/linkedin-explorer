@@ -4,15 +4,7 @@
 
   console.log('loaded');
 
-  const JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js';
-
   const timeout = time => new Promise(resolve => setTimeout(resolve, time));
-
-  const script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.async = false;
-  script.addEventListener('load', () => {
-    jQuery.noConflict();
 
     const basicPlugin = {
       app: undefined,
@@ -21,13 +13,10 @@
       },
       init: function () {
   
-      },
-      $: function () {
-        return this.app.contentWindow.jQuery.apply(this, arguments);
       }
     };
   
-    const iTAPlugin = jQuery.extend(jQuery.extend({}, basicPlugin), {
+    const iTAPlugin = Object.assign(basicPlugin, {
       links: [],
       currentIndex: 0,
       currentPage: '',
@@ -153,7 +142,6 @@
       init: function () {
         this.panelId = this.iframeId + '345345';
         this.createIframe(true);
-        this.windowInit();
         this.initPlugins();
       },
       createIframe: function (removeHTML) {
@@ -168,7 +156,7 @@
         iframe.src = document.location.href;
         iframe.id = this.iframeId;
         iframe.width = '100%';
-        iframe.height = jQuery(window).height();
+        iframe.height = window.innerHeight;
   
         if (removeHTML) {
           document.body.innerHTML = '';
@@ -191,18 +179,12 @@
         div.innerHTML = '';
         document.body.appendChild(div);
       },
-      windowInit: function () {
-        if (this.contentWindow.document.getElementById('a11y-notification') !== null) {
-          const script = this.contentWindow.document.createElement('script');
-          script.type = 'text/javascript';
-          script.async = false;
-          script.src = JQUERY_URL;
-          this.contentWindow.document.getElementsByTagName('head')[0].appendChild(script);
-          jQuery.noConflict();
-          return;
-        }
-        setTimeout(this.windowInit.bind(this), 100);
+
+
+      windowInit() {
+        // Put code that you want to run after iframe is created
       },
+
       initPlugins: function () {
         this.plugins.forEach(function (plugin) {
           plugin.init();
@@ -217,7 +199,4 @@
   
     loader.addPlugin(iTAPlugin);
     loader.init();
-  });
-  script.src = JQUERY_URL;
-  document.getElementsByTagName('head')[0].appendChild(script);
 }());
