@@ -3,16 +3,17 @@
 
   const timeout = time => new Promise(resolve => setTimeout(resolve, time))
 
-  const iTAPlugin = {
-    iframe: null,
-    links: [],
-    currentIndex: 0,
-    currentPage: '',
-    pageNumber: 1,
-    openToWork: [],
+  class LinkedInExplorerPlugin {
+    iframe = null
+    links = []
+    currentIndex = 0
+    currentPage = ''
+    pageNumber = 1
+    openToWork = []
     setApp(iframe) {
       this.iframe = iframe
-    },
+    }
+
     init() {
       try {
         document.getElementByIdЋ(loader.panelId).removeChild(document.getElementById('ita-btn'))
@@ -24,7 +25,8 @@
       btn.innerHTML = 'Add iTA People'
       btn.addEventListener('click', () => this.findOpenToWorkEngineers())
       document.getElementById(loader.panelId).appendChild(btn)
-    },
+    }
+
     async nextPage() {
       // if (this.pageNumber === 1) return true
       console.log('Next page...')
@@ -43,7 +45,8 @@
       this.currentIndex = 0
 
       return false
-    },
+    }
+
     async visitLinks() {
       let userLink = this.links[this.currentIndex]
 
@@ -96,7 +99,8 @@
 
       this.currentIndex++
       this.visitLinks()
-    },
+    }
+
     findOpenToWorkEngineers() {
       console.log('Looking for open to work engineers...')
 
@@ -111,16 +115,18 @@
     }
   }
 
-  const loader = {
-    iframeId: 'loader-inner-iframe-5079520',
-    panelId: null,
-    contentWindow: null,
-    plugins: [],
+  class Loader {
+    iframeId = 'loader-inner-iframe-5079520'
+    panelId = null
+    contentWindow = null
+    plugins = []
+
     init() {
       this.panelId = this.iframeId + '345345'
       this.createIframe(true)
       this.initPlugins()
-    },
+    }
+
     createIframe(removeHTML) {
       removeHTML = removeHTML || false
       try {
@@ -139,7 +145,8 @@
       this.contentWindow = iframe.contentWindow
 
       this.createPanel()
-    },
+    }
+
     createPanel() {
       try {
         document.body.removeChild(document.getElementById(this.panelId))
@@ -150,16 +157,18 @@
       div.id = this.panelId
       div.innerHTML = ''
       document.body.appendChild(div)
-    },
+    }
+
     windowInit() {
       // Put code that you want to run after iframe is created
-    },
+    }
 
     initPlugins() {
       this.plugins.forEach(plugin => {
         plugin.init()
       })
-    },
+    }
+
     addPlugin(plugin) {
       this.plugins.push(plugin)
       plugin.setApp(this)
@@ -167,6 +176,7 @@
     }
   }
 
-  loader.addPlugin(iTAPlugin)
+  const loader = new Loader()
+  loader.addPlugin(new LinkedInExplorerPlugin())
   loader.init()
 })()
