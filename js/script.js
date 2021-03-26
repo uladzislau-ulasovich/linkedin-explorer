@@ -1,17 +1,16 @@
 'use strict';
 
-(function () {
-
+(() => {
   console.log('loaded');
 
   const timeout = time => new Promise(resolve => setTimeout(resolve, time));
 
   const basicPlugin = {
-    app: undefined,
-    setApp: function (app) {
+    app: null,
+    setApp(app) {
       this.app = app;
     },
-    init: function () {
+    init() {
 
     }
   };
@@ -22,7 +21,7 @@
     currentPage: '',
     pageNumber: 1,
     openToWork: [],
-    init: function () {
+    init() {
       try {
         document.getElementById(loader.panelId).removeChild(document.getElementById('ita-btn'));
       } catch (e) {
@@ -33,9 +32,7 @@
       btn.style = 'background-color: white;';
       btn.id = 'ita-btn';
       btn.innerHTML = 'Add iTA People';
-      btn.onclick = function () {
-        this.findOpenToWorkEngineers();
-      }.bind(this);
+      btn.addEventListener('click', () => this.findOpenToWorkEngineers())
       document.getElementById(loader.panelId).appendChild(btn);
     },
     async nextPage() {
@@ -110,22 +107,12 @@
       this.currentIndex++
       this.visitLinks()
     },
-    findOpenToWorkEngineers: function () {
+    findOpenToWorkEngineers() {
       console.log('Looking for open to work engineers...')
 
-      const pageParam = this.app.contentWindow.location.search
-        .substr(1)
-        .split('&')
-        .filter(param => param.startsWith('page'))[0]
+      const searchParams = new URLSearchParams(this.app.contentWindow.location.search)
 
-      if (pageParam) {
-        this.pageNumber = Number(pageParam.split('=')[1])
-        console.log(`Continue search from page ${this.pageNumber}`)
-      } else {
-        console.log(`Start search from page ${this.pageNumber}`)
-        this.pageNumber = 1
-      }
-
+      this.pageNumber = +searchParams.get('page') || 1
       this.currentPage = this.app.contentWindow.location.href;
       this.links = this.app.contentWindow.document.querySelectorAll('.entity-result__title-text > .app-aware-link')
       console.log('User profiles: ', this.links);
@@ -137,14 +124,14 @@
   const loader = {
     iframeId: 'loader-inner-iframe-5079520',
     panelId: null,
-    contentWindow: undefined,
+    contentWindow: null,
     plugins: [],
-    init: function () {
+    init() {
       this.panelId = this.iframeId + '345345';
       this.createIframe(true);
       this.initPlugins();
     },
-    createIframe: function (removeHTML) {
+    createIframe(removeHTML) {
 
       removeHTML = removeHTML || false;
       try {
@@ -166,7 +153,7 @@
 
       this.createPanel();
     },
-    createPanel: function () {
+    createPanel() {
       try {
         document.body.removeChild(document.getElementById(this.panelId));
       } catch (e) {
@@ -183,12 +170,12 @@
       // Put code that you want to run after iframe is created
     },
 
-    initPlugins: function () {
-      this.plugins.forEach(function (plugin) {
+    initPlugins() {
+      this.plugins.forEach(plugin => {
         plugin.init();
       });
     },
-    addPlugin: function (plugin) {
+    addPlugin(plugin) {
       this.plugins.push(plugin);
       plugin.setApp(this);
       return this;
@@ -197,4 +184,4 @@
 
   loader.addPlugin(iTAPlugin);
   loader.init();
-}());
+})();
