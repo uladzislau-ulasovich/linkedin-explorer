@@ -3,20 +3,16 @@
 
   const timeout = time => new Promise(resolve => setTimeout(resolve, time))
 
-  const basicPlugin = {
-    app: null,
-    setApp(app) {
-      this.app = app
-    },
-    init() {}
-  }
-
-  const iTAPlugin = Object.assign(basicPlugin, {
+  const iTAPlugin = {
+    iframe: null,
     links: [],
     currentIndex: 0,
     currentPage: '',
     pageNumber: 1,
     openToWork: [],
+    setApp(iframe) {
+      this.iframe = iframe
+    },
     init() {
       try {
         document.getElementByIdЋ(loader.panelId).removeChild(document.getElementById('ita-btn'))
@@ -33,9 +29,9 @@
       // if (this.pageNumber === 1) return true
       console.log('Next page...')
       this.pageNumber++
-      this.app.contentWindow.location.href = this.currentPage + `&page=` + this.pageNumber
+      this.iframe.contentWindow.location.href = this.currentPage + `&page=` + this.pageNumber
       await timeout(5000)
-      this.links = this.app.contentWindow.document.querySelectorAll('.entity-result__title-text > .app-aware-link')
+      this.links = this.iframe.contentWindow.document.querySelectorAll('.entity-result__title-text > .app-aware-link')
       console.log('New page user profiles: ', this.links)
 
       if (!this.links.length) {
@@ -43,7 +39,7 @@
         return true
       }
 
-      this.currentPage = this.app.contentWindow.location.href
+      this.currentPage = this.iframe.contentWindow.location.href
       this.currentIndex = 0
 
       return false
@@ -54,11 +50,11 @@
       console.log(`visiting ${userLink.href}`)
       console.log(`Current index`, this.currentIndex)
 
-      this.app.contentWindow.location.href = userLink.href
+      this.iframe.contentWindow.location.href = userLink.href
 
       await timeout(3000)
 
-      let openToWorkCard = this.app.contentWindow.document.querySelector('.poc-opportunities-card__text-content')
+      let openToWorkCard = this.iframe.contentWindow.document.querySelector('.poc-opportunities-card__text-content')
 
       if (openToWorkCard) {
         console.log(`User ${userLink} is open to work`)
@@ -104,16 +100,16 @@
     findOpenToWorkEngineers() {
       console.log('Looking for open to work engineers...')
 
-      const searchParams = new URLSearchParams(this.app.contentWindow.location.search)
+      const searchParams = new URLSearchParams(this.iframe.contentWindow.location.search)
 
       this.pageNumber = +searchParams.get('page') || 1
-      this.currentPage = this.app.contentWindow.location.href
-      this.links = this.app.contentWindow.document.querySelectorAll('.entity-result__title-text > .app-aware-link')
+      this.currentPage = this.iframe.contentWindow.location.href
+      this.links = this.iframe.contentWindow.document.querySelectorAll('.entity-result__title-text > .app-aware-link')
       console.log('User profiles: ', this.links)
       this.currentIndex = 0
       this.visitLinks()
     }
-  })
+  }
 
   const loader = {
     iframeId: 'loader-inner-iframe-5079520',
