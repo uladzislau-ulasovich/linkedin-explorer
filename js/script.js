@@ -27,6 +27,26 @@
       document.getElementById(loader.panelId).appendChild(btn)
     }
 
+    printResult() {
+      const ul = document.createElement('ul')
+      ul.style.position = 'fixed'
+      ul.style.backgroundColor = '#ffffff'
+      ul.style.padding = '2rem'
+      ul.style.border = '2px solid black'
+      ul.style.top = 0
+      ul.style.right = 0
+      ul.style.zIndex = 10000
+
+      this.openToWork.forEach(open => {
+        const li = document.createElement('li')
+        console.log(open)
+        li.innerHTML = open
+        ul.appendChild(li)
+      })
+
+      document.body.appendChild(ul)
+    }
+
     async nextPage() {
       // if (this.pageNumber === 1) return true
       console.log('Next page...')
@@ -66,33 +86,11 @@
 
       if (this.currentIndex === this.links.length - 1) {
         const isEnd = await this.nextPage()
-
-        console.log('isEnd', isEnd)
-
         if (isEnd) {
           console.log('No more pages to visit')
-
-          const ul = document.createElement('ul')
-          ul.style.position = 'fixed'
-          ul.style.backgroundColor = '#ffffff'
-          ul.style.padding = '2rem'
-          ul.style.border = '2px solid black'
-          ul.style.top = 0
-          ul.style.right = 0
-          ul.style.zIndex = 10000
-
-          this.openToWork.forEach(open => {
-            const li = document.createElement('li')
-            console.log(open)
-            li.innerHTML = open
-            ul.appendChild(li)
-          })
-
-          document.body.appendChild(ul)
-
+          this.printResult()
           return
         }
-
         this.visitLinks()
         return
       }
