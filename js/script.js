@@ -3,6 +3,24 @@
 
   const timeout = time => new Promise(resolve => setTimeout(resolve, time))
 
+  const asyncInterval = async (callback, ms = 500, triesLeft = 25) =>
+    new Promise((resolve, reject) => {
+      const interval = setInterval(async () => {
+        const result = await callback()
+
+        if (!result && triesLeft <= 1) {
+          clearInterval(interval)
+          reject()
+        }
+
+        if (result) {
+          resolve(result)
+        }
+
+        triesLeft--
+      }, ms)
+    })
+
   class LinkedInExplorerPlugin {
     iframe = null
     links = []
@@ -52,7 +70,12 @@
       console.log('Next page...')
       this.pageNumber++
       this.iframe.contentWindow.location.href = this.currentPage + `&page=` + this.pageNumber
-      await timeout(5000)
+
+      await asyncInterval(() => {
+        this.iframe.contentWindow.scroll(0, this.iframe.contentWindow.document.body.scrollHeight)
+        return this.iframe.contentWindow.document.querySelector('.artdeco-pagination.ember-view.pv5.ph2')
+      })
+
       this.links = this.iframe.contentWindow.document.querySelectorAll('.entity-result__title-text > .app-aware-link')
       console.log('New page user profiles: ', this.links)
 
@@ -75,7 +98,7 @@
 
       this.iframe.contentWindow.location.href = userLink.href
 
-      await timeout(3000)
+      await asyncInterval(() => this.iframe.contentWindow.document.querySelector('.artdeco-card.ember-view.pv-top-card'))
 
       let openToWorkCard = this.iframe.contentWindow.document.querySelector('.poc-opportunities-card__text-content')
 
@@ -99,7 +122,7 @@
       this.visitLinks()
     }
 
-    findOpenToWorkEngineers() {
+    async findOpenToWorkEngineers() {
       console.log('Looking for open to work engineers...')
 
       const searchParams = new URLSearchParams(this.iframe.contentWindow.location.search)
