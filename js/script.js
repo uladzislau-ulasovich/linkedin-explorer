@@ -77,9 +77,9 @@
                 return this.iframe.contentWindow.document.querySelector('.artdeco-pagination.ember-view.pv5.ph2')
             })
 
-            this.links = this.iframe.contentWindow.document.querySelectorAll(
-                '.entity-result__title-text > .app-aware-link'
-            )
+            this.links = [
+                ...this.iframe.contentWindow.document.querySelectorAll('.entity-result__title-text > .app-aware-link')
+            ].filter(link => !link.href.startsWith('https://www.linkedin.com/search'))
             console.log('New page user profiles: ', this.links)
 
             if (!this.links.length) {
