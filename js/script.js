@@ -34,7 +34,7 @@
 
         init() {
             try {
-                document.getElementByIdЋ(loader.panelId).removeChild(document.getElementById('ita-btn'))
+                document.getElementById(loader.panelId).removeChild(document.getElementById('ita-btn'))
             } catch (e) {}
 
             const btn = document.createElement('button')
