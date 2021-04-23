@@ -125,6 +125,7 @@
                 return
             }
 
+            await timeout(1000)
             this.currentIndex++
             this.visitLinks()
         }
