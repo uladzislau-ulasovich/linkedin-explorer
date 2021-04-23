@@ -77,15 +77,17 @@
                 return this.iframe.contentWindow.document.querySelector('.artdeco-pagination.ember-view.pv5.ph2')
             })
 
-            this.links = [
+            const newLinks = [
                 ...this.iframe.contentWindow.document.querySelectorAll('.entity-result__title-text > .app-aware-link')
-            ].filter(link => !link.href.startsWith('https://www.linkedin.com/search'))
-            console.log('New page user profiles: ', this.links)
+            ]
 
-            if (!this.links.length) {
+            if (!newLinks.length) {
                 console.log(`No more pages are available`)
                 return true
             }
+
+            this.links = [...this.links, ...newLinks]
+            console.log('New page user profiles: ', this.links)
 
             this.currentPage = this.iframe.contentWindow.location.href
             this.currentIndex = 0
@@ -94,7 +96,7 @@
         }
 
         async visitLinks() {
-            let userLink = this.links[this.currentIndex]
+            const userLink = this.links[this.currentIndex]
 
             console.log(`visiting ${userLink.href}`)
             console.log(`Current index`, this.currentIndex)
@@ -104,6 +106,8 @@
             await asyncInterval(() =>
                 this.iframe.contentWindow.document.querySelector('.artdeco-card.ember-view.pv-top-card')
             )
+
+            await timeout(1000)
 
             let openToWorkCard = this.iframe.contentWindow.document.querySelector(
                 '.poc-opportunities-card__text-content'
@@ -115,19 +119,28 @@
             }
 
             if (this.currentIndex === this.links.length - 1) {
-                const isEnd = await this.nextPage()
-                if (isEnd) {
-                    console.log('No more pages to visit')
-                    this.printResult()
-                    return
-                }
-                this.visitLinks()
+                console.log(this.openToWork)
+                this.printResult()
                 return
             }
 
-            await timeout(1000)
             this.currentIndex++
             this.visitLinks()
+        }
+
+        async collectLinks() {
+            const isEnd = await this.nextPage()
+
+            await timeout(1000)
+
+            if (isEnd) {
+                this.links = this.links.filter(link => !link.href.startsWith('https://www.linkedin.com/search'))
+                this.visitLinks()
+
+                return
+            }
+
+            this.collectLinks()
         }
 
         async findOpenToWorkEngineers() {
@@ -137,12 +150,10 @@
 
             this.pageNumber = +searchParams.get('page') || 1
             this.currentPage = this.iframe.contentWindow.location.href
-            this.links = this.iframe.contentWindow.document.querySelectorAll(
-                '.entity-result__title-text > .app-aware-link'
-            )
-            console.log('User profiles: ', this.links)
-            this.currentIndex = 0
-            this.visitLinks()
+            this.links = [
+                ...this.iframe.contentWindow.document.querySelectorAll('.entity-result__title-text > .app-aware-link')
+            ]
+            this.collectLinks()
         }
     }
 
