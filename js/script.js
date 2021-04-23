@@ -14,6 +14,7 @@
                 }
 
                 if (result) {
+                    clearInterval(interval)
                     resolve(result)
                 }
 
