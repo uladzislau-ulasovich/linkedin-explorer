@@ -29,6 +29,7 @@
         currentPage = ''
         pageNumber = 1
         openToWork = []
+        blacklist = new Set()
         setApp(iframe) {
             this.iframe = iframe
         }
@@ -44,6 +45,31 @@
             btn.innerHTML = 'Add iTA People'
             btn.addEventListener('click', () => this.findOpenToWorkEngineers())
             document.getElementById(loader.panelId).appendChild(btn)
+            this.createBlacklistArea()
+        }
+
+        createBlacklistArea() {
+            try {
+                document.getElementById(loader.panelId).removeChild(document.getElementById('ita-blacklist'))
+            } catch {}
+
+            const blacklistArea = document.createElement('textarea')
+            blacklistArea.style = 'background-color: white; display: block; width: 200px; height: 400px'
+            blacklistArea.id = 'ita-blacklist'
+            blacklistArea.addEventListener('input', e => {
+                this.blacklist = new Set(
+                    e.target.value
+                        .split('\n')
+                        .filter(Boolean)
+                        .map(url => url.replace(/\/$/g, ''))
+                )
+            })
+            blacklistArea.placeholder = 'Blacklist'
+            document.getElementById(loader.panelId).appendChild(blacklistArea)
+        }
+
+        filterLinksByBlacklist() {
+            this.links = this.links.filter(link => !this.blacklist.has(link.href))
         }
 
         printResult() {
@@ -135,6 +161,7 @@
 
             if (isEnd) {
                 this.links = this.links.filter(link => !link.href.startsWith('https://www.linkedin.com/search'))
+                this.filterLinksByBlacklist()
                 this.visitLinks()
 
                 return
