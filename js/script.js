@@ -139,7 +139,9 @@
                 '.poc-opportunities-card__text-content'
             )
 
-            if (openToWorkCard) {
+            const openToWorkHeading = openToWorkCard?.querySelector('.inline-show-more-text')
+
+            if (openToWorkCard && openToWorkHeading?.textContent.trim() === 'В поиске работы') {
                 console.log(`User ${userLink} is open to work`)
                 this.openToWork.push(userLink.href)
             }
