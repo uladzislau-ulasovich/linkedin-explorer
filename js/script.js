@@ -30,6 +30,8 @@
         pageNumber = 1
         openToWork = []
         blacklist = new Set()
+        allowedCardTexts = new Set(['В поиске работы', 'Open to work'])
+
         setApp(iframe) {
             this.iframe = iframe
         }
@@ -141,7 +143,7 @@
 
             const openToWorkHeading = openToWorkCard?.querySelector('.inline-show-more-text')
 
-            if (openToWorkCard && openToWorkHeading?.textContent.trim() === 'В поиске работы') {
+            if (openToWorkCard && this.allowedCardTexts.has(openToWorkHeading?.textContent.trim())) {
                 console.log(`User ${userLink} is open to work`)
                 this.openToWork.push(userLink.href)
             }
