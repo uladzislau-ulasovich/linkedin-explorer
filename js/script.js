@@ -70,10 +70,6 @@
             document.getElementById(loader.panelId).appendChild(blacklistArea)
         }
 
-        filterLinksByBlacklist() {
-            this.links = this.links.filter(link => !this.blacklist.has(link.href))
-        }
-
         printResult() {
             const ul = document.createElement('ul')
             ul.style.position = 'fixed'
@@ -164,14 +160,19 @@
             await timeout(1000)
 
             if (isEnd) {
-                this.links = this.links.filter(link => !link.href.startsWith('https://www.linkedin.com/search'))
-                this.filterLinksByBlacklist()
+                this.filterLinks()
                 this.visitLinks()
 
                 return
             }
 
             this.collectLinks()
+        }
+
+        filterLinks() {
+            this.links = this.links.filter(
+                link => !link.href.startsWith('https://www.linkedin.com/search') && !this.blacklist.has(link.href)
+            )
         }
 
         async findOpenToWorkEngineers() {
