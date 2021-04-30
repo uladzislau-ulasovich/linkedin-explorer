@@ -47,13 +47,13 @@
                 document.getElementById(loader.panelId).removeChild(document.getElementById('ita-btn'))
             } catch (e) {}
 
-            const btn = document.createElement('button')
-            btn.style = 'background-color: white;'
-            btn.id = 'ita-btn'
-            btn.innerHTML = 'Add iTA People'
-            btn.addEventListener('click', () => this.findOpenToWorkEngineers())
-            document.getElementById(loader.panelId).appendChild(btn)
-            this.createBlacklistArea()
+            const button = document.createElement('button')
+
+            button.id = 'ita-btn'
+            button.classList.add('button')
+            button.innerHTML = 'Add <span class="accent">:i</span>Tech<span class="accent">Art</span> people'
+            button.addEventListener('click', () => this.findOpenToWorkEngineers())
+            document.getElementById(loader.panelId).appendChild(button)
         }
 
         createBlacklistArea() {
