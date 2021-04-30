@@ -37,6 +37,12 @@
         }
 
         init() {
+            this.createStyles()
+            this.createButton()
+            this.createBlacklistArea()
+        }
+
+        createButton() {
             try {
                 document.getElementById(loader.panelId).removeChild(document.getElementById('ita-btn'))
             } catch (e) {}
@@ -186,6 +192,39 @@
                 ...this.iframe.contentWindow.document.querySelectorAll('.entity-result__title-text > .app-aware-link')
             ]
             this.collectLinks()
+        }
+
+        createStyles() {
+            try {
+                document.getElementById(loader.panelId).removeChild(document.getElementById('ita-styles'))
+            } catch {}
+
+            const styles = `<style id="ita-styles">
+                :root {
+                    --background-color: #ffffff;
+                    --primary-color: #000000;
+                    --accent-color: #ff0025;
+
+                    --border-radius: 10px;
+                }
+
+                .button {
+                    display: block;
+                    appearance: none;
+                    background-color: var(--background-color);
+                    font-weight: bold;
+                    padding: 1em;
+                    border: 1px solid var(--primary-color);
+                    border-radius: var(--border-radius);
+                    margin-bottom: 1rem;
+                }
+                
+                .accent {
+                    color: var(--accent-color);
+                }
+            </style>`
+
+            document.getElementById(loader.panelId).insertAdjacentHTML('beforeend', styles)
         }
     }
 
