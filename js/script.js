@@ -1,7 +1,7 @@
 ;(() => {
     console.log('loaded')
 
-    const timeout = time => new Promise(resolve => setTimeout(resolve, time))
+    const asyncTimeout = time => new Promise(resolve => setTimeout(resolve, time))
 
     const asyncInterval = async (callback, ms = 500, triesLeft = 25) =>
         new Promise((resolve, reject) => {
@@ -131,7 +131,7 @@
                 this.iframe.contentWindow.document.querySelector('.artdeco-card.ember-view.pv-top-card')
             )
 
-            await timeout(1000)
+            await asyncTimeout(1000)
 
             let openToWorkCard = this.iframe.contentWindow.document.querySelector(
                 '.poc-opportunities-card__text-content'
@@ -157,7 +157,7 @@
         async collectLinks() {
             const isEnd = await this.nextPage()
 
-            await timeout(1000)
+            await asyncTimeout(1000)
 
             if (isEnd) {
                 this.filterLinks()
