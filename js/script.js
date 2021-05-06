@@ -1,6 +1,10 @@
 ;(() => {
     const IFRAME_ID = 'ita-iframe'
     const PANEL_ID = 'ita-panel'
+    const BUTTON_ID = 'ita-button'
+    const BLACKLIST_ID = 'ita-blacklist'
+    const BLACKLIST_PLACEHOLDER = 'Blacklist'
+    const STYLES_ID = 'ita-styles'
 
     console.log('loaded')
 
@@ -59,36 +63,43 @@
 
         createButton() {
             try {
-                document.getElementById(PANEL_ID).removeChild(document.getElementById('ita-btn'))
+                document.getElementById(PANEL_ID).removeChild(document.getElementById(BUTTON_ID))
             } catch (e) {}
 
-            const button = document.createElement('button')
+            const button = createElementFromHTML(`
+                <button id="${BUTTON_ID}" class="button">
+                    Add <span class="accent">:i</span>Tech<span class="accent">Art</span> people
+                </button>
+            `)
 
-            button.id = 'ita-btn'
-            button.classList.add('button')
-            button.innerHTML = 'Add <span class="accent">:i</span>Tech<span class="accent">Art</span> people'
             button.addEventListener('click', () => this.findOpenToWorkEngineers())
             document.getElementById(PANEL_ID).appendChild(button)
         }
 
         createBlacklistArea() {
             try {
-                document.getElementById(PANEL_ID).removeChild(document.getElementById('ita-blacklist'))
+                document.getElementById(PANEL_ID).removeChild(document.getElementById(BLACKLIST_ID))
             } catch {}
 
-            const blacklistArea = document.createElement('textarea')
-            blacklistArea.style = 'background-color: white; display: block; width: 200px; height: 400px'
-            blacklistArea.id = 'ita-blacklist'
-            blacklistArea.addEventListener('input', e => {
-                this.blacklist = new Set(
-                    e.target.value
-                        .split('\n')
-                        .filter(Boolean)
-                        .map(url => url.replace(/\/$/g, ''))
-                )
-            })
-            blacklistArea.placeholder = 'Blacklist'
+            const blacklistArea = createElementFromHTML(`
+                <textarea
+                    id="${BLACKLIST_ID}"
+                    class="blacklist"
+                    placeholder="${BLACKLIST_PLACEHOLDER}"
+                ></textarea>
+            `)
+
+            blacklistArea.addEventListener('input', e => this.updateBlacklist(e.target.value))
             document.getElementById(PANEL_ID).appendChild(blacklistArea)
+        }
+
+        updateBlacklist(blacklist) {
+            this.blacklist = new Set(
+                blacklist
+                    .split('\n')
+                    .filter(Boolean)
+                    .map(url => url.replace(/\/$/g, ''))
+            )
         }
 
         printResult() {
@@ -211,35 +222,44 @@
 
         createStyles() {
             try {
-                document.getElementById(PANEL_ID).removeChild(document.getElementById('ita-styles'))
+                document.getElementById(PANEL_ID).removeChild(document.getElementById(STYLES_ID))
             } catch {}
 
-            const styles = `<style id="ita-styles">
-                :root {
-                    --background-color: #ffffff;
-                    --primary-color: #000000;
-                    --accent-color: #ff0025;
+            const styles = createElementFromHTML(`
+                <style id="${STYLES_ID}">
+                    :root {
+                        --background-color: #ffffff;
+                        --primary-color: #000000;
+                        --accent-color: #ff0025;
 
-                    --border-radius: 10px;
-                }
+                        --border-radius: 10px;
+                    }
 
-                .button {
-                    display: block;
-                    appearance: none;
-                    background-color: var(--background-color);
-                    font-weight: bold;
-                    padding: 1em;
-                    border: 1px solid var(--primary-color);
-                    border-radius: var(--border-radius);
-                    margin-bottom: 1rem;
-                }
-                
-                .accent {
-                    color: var(--accent-color);
-                }
-            </style>`
+                    .button {
+                        display: block;
+                        appearance: none;
+                        background-color: var(--background-color);
+                        font-weight: bold;
+                        padding: 1em;
+                        border: 1px solid var(--primary-color);
+                        border-radius: var(--border-radius);
+                        margin-bottom: 1rem;
+                    }
+                    
+                    .accent {
+                        color: var(--accent-color);
+                    }
 
-            document.getElementById(PANEL_ID).insertAdjacentHTML('beforeend', styles)
+                    .blacklist {
+                        background-color: var(--background-color);
+                        display: block;
+                        width: 200px;
+                        height: 400px;
+                    }
+                </style>
+            `)
+
+            document.getElementById(PANEL_ID).appendChild(styles)
         }
     }
 
