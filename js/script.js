@@ -1,4 +1,7 @@
 ;(() => {
+    const IFRAME_ID = 'ita-iframe'
+    const PANEL_ID = 'ita-panel'
+
     console.log('loaded')
 
     const asyncTimeout = time => new Promise(resolve => setTimeout(resolve, time))
@@ -44,7 +47,7 @@
 
         createButton() {
             try {
-                document.getElementById(loader.panelId).removeChild(document.getElementById('ita-btn'))
+                document.getElementById(PANEL_ID).removeChild(document.getElementById('ita-btn'))
             } catch (e) {}
 
             const button = document.createElement('button')
@@ -53,12 +56,12 @@
             button.classList.add('button')
             button.innerHTML = 'Add <span class="accent">:i</span>Tech<span class="accent">Art</span> people'
             button.addEventListener('click', () => this.findOpenToWorkEngineers())
-            document.getElementById(loader.panelId).appendChild(button)
+            document.getElementById(PANEL_ID).appendChild(button)
         }
 
         createBlacklistArea() {
             try {
-                document.getElementById(loader.panelId).removeChild(document.getElementById('ita-blacklist'))
+                document.getElementById(PANEL_ID).removeChild(document.getElementById('ita-blacklist'))
             } catch {}
 
             const blacklistArea = document.createElement('textarea')
@@ -73,7 +76,7 @@
                 )
             })
             blacklistArea.placeholder = 'Blacklist'
-            document.getElementById(loader.panelId).appendChild(blacklistArea)
+            document.getElementById(PANEL_ID).appendChild(blacklistArea)
         }
 
         printResult() {
@@ -196,7 +199,7 @@
 
         createStyles() {
             try {
-                document.getElementById(loader.panelId).removeChild(document.getElementById('ita-styles'))
+                document.getElementById(PANEL_ID).removeChild(document.getElementById('ita-styles'))
             } catch {}
 
             const styles = `<style id="ita-styles">
@@ -224,29 +227,26 @@
                 }
             </style>`
 
-            document.getElementById(loader.panelId).insertAdjacentHTML('beforeend', styles)
+            document.getElementById(PANEL_ID).insertAdjacentHTML('beforeend', styles)
         }
     }
 
     class Loader {
-        iframeId = 'loader-inner-iframe-5079520'
-        panelId = null
         contentWindow = null
         plugins = []
 
         init() {
-            this.panelId = this.iframeId + '345345'
             this.createIframe()
             this.initPlugins()
         }
 
         createIframe() {
             try {
-                document.body.removeChild(document.getElementById(this.iframeId))
+                document.body.removeChild(document.getElementById(IFRAME_ID))
             } catch (e) {}
             const iframe = document.createElement('iframe')
             iframe.src = document.location.href
-            iframe.id = this.iframeId
+            iframe.id = IFRAME_ID
             iframe.width = '100%'
             iframe.height = window.innerHeight
 
@@ -259,12 +259,12 @@
 
         createPanel() {
             try {
-                document.body.removeChild(document.getElementById(this.panelId))
+                document.body.removeChild(document.getElementById(PANEL_ID))
             } catch (e) {}
 
             const div = document.createElement('div')
             div.style = 'position: absolute; top: 5px; left: 20px; font-weight: bold;'
-            div.id = this.panelId
+            div.id = PANEL_ID
             div.innerHTML = ''
             document.body.appendChild(div)
         }
