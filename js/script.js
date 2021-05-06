@@ -236,12 +236,11 @@
 
         init() {
             this.panelId = this.iframeId + '345345'
-            this.createIframe(true)
+            this.createIframe()
             this.initPlugins()
         }
 
-        createIframe(removeHTML) {
-            removeHTML = removeHTML || false
+        createIframe() {
             try {
                 document.body.removeChild(document.getElementById(this.iframeId))
             } catch (e) {}
@@ -251,9 +250,7 @@
             iframe.width = '100%'
             iframe.height = window.innerHeight
 
-            if (removeHTML) {
-                document.body.innerHTML = ''
-            }
+            document.body.innerHTML = ''
             document.body.appendChild(iframe)
             this.contentWindow = iframe.contentWindow
 
