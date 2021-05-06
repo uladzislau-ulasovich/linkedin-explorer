@@ -9,19 +9,23 @@
     const asyncInterval = async (callback, ms = 500, triesLeft = 25) =>
         new Promise((resolve, reject) => {
             const interval = setInterval(async () => {
-                const result = await callback()
+                try {
+                    const result = await callback()
 
-                if (!result && triesLeft <= 1) {
-                    clearInterval(interval)
-                    reject()
+                    if (!result && triesLeft <= 1) {
+                        clearInterval(interval)
+                        reject()
+                    }
+
+                    if (result) {
+                        clearInterval(interval)
+                        resolve(result)
+                    }
+
+                    triesLeft--
+                } catch {
+                    triesLeft--
                 }
-
-                if (result) {
-                    clearInterval(interval)
-                    resolve(result)
-                }
-
-                triesLeft--
             }, ms)
         })
 
